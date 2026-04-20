@@ -1,8 +1,15 @@
 import React, { memo } from 'react';
 import { Handle, Position } from '@xyflow/react';
 import type { NodeProps } from '@xyflow/react';
+import { 
+  Play, 
+  ClipboardList, 
+  UserCheck, 
+  Zap, 
+  Square 
+} from 'lucide-react';
 
-// ── Shared premium wrapper ───────────────────────────────────────────────────
+// ── Shared Neo-Brutalist wrapper ─────────────────────────────────────────────
 const NodeShell = ({
   children,
   color,
@@ -20,114 +27,118 @@ const NodeShell = ({
 }) => (
   <div
     className={`
-      bg-white/90 backdrop-blur-sm rounded-2xl border transition-all duration-300 group
+      bg-white border-[3px] border-black transition-all duration-100
       ${selected 
-        ? 'border-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.2)] scale-[1.02]' 
-        : 'border-slate-200/60 shadow-lg hover:shadow-xl hover:translate-y-[-2px] hover:border-slate-300'
+        ? 'translate-x-[-4px] translate-y-[-4px] shadow-[8px_8px_0px_0px_#000000]' 
+        : 'shadow-[4px_4px_0px_0px_#000000] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_#000000]'
       }
-      overflow-hidden min-w-[240px] max-w-[280px]
+      min-w-[240px] max-w-[280px] overflow-hidden
     `}
   >
-    {/* Accent Header Line */}
-    <div className={`h-1.5 w-full ${color}`} />
-    
-    <div className="p-4">
-      <div className="flex items-center gap-3 mb-3">
-        <div className={`
-          w-10 h-10 rounded-xl ${color} text-white flex items-center justify-center text-lg font-bold
-          shadow-lg shadow-${color.replace('bg-', '')}/30 transition-transform group-hover:scale-110
-        `}>
-          {icon}
-        </div>
-        <div className="min-w-0">
-          <p className="text-sm font-bold text-slate-800 tracking-tight truncate">{title}</p>
-          {subtitle && <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest truncate">{subtitle}</p>}
-        </div>
+    {/* Header Banner */}
+    <div className={`px-4 py-2 border-b-[3px] border-black flex items-center gap-3 ${color}`}>
+      <div className="text-xl font-black text-black">
+        {icon}
       </div>
-      
+      <div className="min-w-0">
+        <p className="text-[12px] font-black uppercase tracking-widest text-black/60 leading-none mb-1">
+          {subtitle || 'Node'}
+        </p>
+        <p className="text-sm font-black text-black uppercase truncate leading-none">
+          {title}
+        </p>
+      </div>
+    </div>
+    
+    <div className="p-4 bg-white">
       {children}
     </div>
   </div>
 );
 
-// ── Individual premium node types ──────────────────────────────────────────────
+// ── Neo-Brutalist Node types ──────────────────────────────────────────────────
 
 export const StartNode = memo(({ data, selected }: NodeProps) => (
-  <NodeShell color="bg-emerald-500" icon="▶" title={(data as any).startTitle || 'Trigger Start'} subtitle="Flow Entry Point" selected={selected}>
-    <div className="flex flex-col gap-1 mt-2">
-      <div className="h-1 w-full bg-emerald-100 rounded-full overflow-hidden">
-        <div className="h-full bg-emerald-500 w-1/3" />
+  <>
+    <NodeShell color="bg-[#fcd34d]" icon={<Play className="w-5 h-5 fill-current" />} title={(data as any).startTitle || 'INITIALIZE'} subtitle="Start Node" selected={selected}>
+      <div className="p-2 border-2 border-black bg-slate-50 font-mono text-[9px] font-bold">
+        SYSTEM.INIT_OK
       </div>
-      <p className="text-[9px] text-slate-400 font-medium">Ready to initialize</p>
-    </div>
-    <Handle type="source" position={Position.Bottom} className="!w-3 !h-3 !bg-emerald-500 !border-2 !border-white !shadow-sm hover:!scale-150 transition-transform" />
-  </NodeShell>
+    </NodeShell>
+    <Handle type="source" position={Position.Bottom} className="!bg-black !rounded-none !w-3 !h-3 !border-0" />
+  </>
 ));
 
 export const TaskNode = memo(({ data, selected }: NodeProps) => (
-  <NodeShell
-    color="bg-blue-500"
-    icon="📋"
-    title={(data as any).title || 'User Task'}
-    subtitle={(data as any).assignee ? `Assignee: ${(data as any).assignee}` : 'Unassigned'}
-    selected={selected}
-  >
-    {(data as any).description && (
-      <div className="bg-slate-50/80 p-2 rounded-lg mt-1 border border-slate-100 italic">
-        <p className="text-[10px] text-slate-500 line-clamp-2 leading-relaxed">{(data as any).description}</p>
+  <>
+    <NodeShell
+      color="bg-[#60a5fa]"
+      icon={<ClipboardList className="w-5 h-5" />}
+      title={(data as any).title || 'UI_TASK'}
+      subtitle="Task Node"
+      selected={selected}
+    >
+      {(data as any).description && (
+        <div className="mb-3">
+          <p className="text-[10px] font-bold text-black/70 leading-tight">{(data as any).description}</p>
+        </div>
+      )}
+      <div className="flex justify-between items-center py-1 px-2 border-2 border-black bg-[#60a5fa]/10">
+         <span className="text-[8px] font-black uppercase">Priority</span>
+         <span className="text-[8px] font-black uppercase bg-black text-white px-1">HIGH</span>
       </div>
-    )}
-    <div className="flex justify-between items-center mt-3 pt-3 border-t border-slate-50">
-       <span className="text-[9px] font-bold text-slate-400 uppercase">Priority</span>
-       <span className="text-[9px] font-bold text-blue-500 bg-blue-50 px-1.5 py-0.5 rounded">Medium</span>
-    </div>
-    <Handle type="target" position={Position.Top} className="!w-3 !h-3 !bg-blue-500 !border-2 !border-white !shadow-sm" />
-    <Handle type="source" position={Position.Bottom} className="!w-3 !h-3 !bg-blue-500 !border-2 !border-white !shadow-sm hover:!scale-150 transition-transform" />
-  </NodeShell>
+    </NodeShell>
+    <Handle type="target" position={Position.Top} className="!bg-black !rounded-none !w-3 !h-3 !border-0" />
+    <Handle type="source" position={Position.Bottom} className="!bg-black !rounded-none !w-3 !h-3 !border-0" />
+  </>
 ));
 
 export const ApprovalNode = memo(({ data, selected }: NodeProps) => (
-  <NodeShell
-    color="bg-amber-500"
-    icon="✓"
-    title={(data as any).title || 'Approval Step'}
-    subtitle={`Role: ${(data as any).approverRole || 'Unset'}`}
-    selected={selected}
-  >
-    <div className="flex items-center gap-2 mt-2">
-       <div className="flex-1 h-2 bg-amber-100 rounded-full overflow-hidden">
-          <div className="h-full bg-amber-500 w-2/3" />
-       </div>
-       <span className="text-[9px] font-bold text-amber-600">67%</span>
-    </div>
-    <Handle type="target" position={Position.Top} className="!w-3 !h-3 !bg-amber-500 !border-2 !border-white !shadow-sm" />
-    <Handle type="source" position={Position.Bottom} className="!w-3 !h-3 !bg-amber-500 !border-2 !border-white !shadow-sm hover:!scale-150 transition-transform" />
-  </NodeShell>
+  <>
+    <NodeShell
+      color="bg-[#fb923c]"
+      icon={<UserCheck className="w-5 h-5" />}
+      title={(data as any).title || 'VERIFY'}
+      subtitle="Approval Node"
+      selected={selected}
+    >
+      <div className="h-6 w-full border-2 border-black relative bg-[#fb923c]/20">
+         <div className="h-full bg-[#fb923c] w-2/3 border-r-2 border-black" />
+         <span className="absolute inset-0 flex items-center justify-center text-[9px] font-black tracking-tighter">PROGRESS: 66%</span>
+      </div>
+    </NodeShell>
+    <Handle type="target" position={Position.Top} className="!bg-black !rounded-none !w-3 !h-3 !border-0" />
+    <Handle type="source" position={Position.Bottom} className="!bg-black !rounded-none !w-3 !h-3 !border-0" />
+  </>
 ));
 
 export const AutomatedStepNode = memo(({ data, selected }: NodeProps) => (
-  <NodeShell
-    color="bg-violet-500"
-    icon="⚡"
-    title={(data as any).title || 'Automation'}
-    subtitle={(data as any).action ? `Act: ${(data as any).action}` : 'Configure Action'}
-    selected={selected}
-  >
-    <div className="mt-2 flex gap-1">
-      <div className="px-1.5 py-0.5 rounded bg-violet-50 text-violet-500 text-[8px] font-bold uppercase tracking-tighter">WebHook</div>
-      <div className="px-1.5 py-0.5 rounded bg-slate-50 text-slate-500 text-[8px] font-bold uppercase tracking-tighter">JSON</div>
-    </div>
-    <Handle type="target" position={Position.Top} className="!w-3 !h-3 !bg-violet-500 !border-2 !border-white !shadow-sm" />
-    <Handle type="source" position={Position.Bottom} className="!w-3 !h-3 !bg-violet-500 !border-2 !border-white !shadow-sm hover:!scale-150 transition-transform" />
-  </NodeShell>
+  <>
+    <NodeShell
+      color="bg-[#a78bfa]"
+      icon={<Zap className="w-5 h-5 fill-current" />}
+      title={(data as any).title || 'AUTOMATE'}
+      subtitle="Automated Step Node"
+      selected={selected}
+    >
+      <div className="flex flex-wrap gap-1">
+        <div className="px-2 py-0.5 border-2 border-black bg-white text-[8px] font-black uppercase italic tracking-tighter">JSON_RPC</div>
+        <div className="px-2 py-0.5 border-2 border-black bg-black text-white text-[8px] font-black uppercase tracking-tighter">CLOUD_RUN</div>
+      </div>
+    </NodeShell>
+    <Handle type="target" position={Position.Top} className="!bg-black !rounded-none !w-3 !h-3 !border-0" />
+    <Handle type="source" position={Position.Bottom} className="!bg-black !rounded-none !w-3 !h-3 !border-0" />
+  </>
 ));
 
 export const EndNode = memo(({ data, selected }: NodeProps) => (
-  <NodeShell color="bg-rose-500" icon="⏹" title={(data as any).endMessage || 'End Process'} subtitle="Termination Point" selected={selected}>
-    <div className="mt-2 flex items-center gap-1.5">
-       <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
-       <p className="text-[9px] text-slate-400 font-medium">Auto-closing active</p>
-    </div>
-    <Handle type="target" position={Position.Top} className="!w-3 !h-3 !bg-rose-500 !border-2 !border-white !shadow-sm" />
-  </NodeShell>
+  <>
+    <NodeShell color="bg-[#f87171]" icon={<Square className="w-5 h-5 fill-current" />} title={(data as any).endMessage || 'TERMINATE'} subtitle="End Node" selected={selected}>
+      <div className="p-2 border-2 border-black bg-rose-50 flex items-center gap-2">
+         <div className="w-2 h-2 bg-rose-500 border border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]" />
+         <p className="text-[9px] font-black text-black">PROCESS_TERMINATION_ACTIVE</p>
+      </div>
+    </NodeShell>
+    <Handle type="target" position={Position.Top} className="!bg-black !rounded-none !w-3 !h-3 !border-0" />
+  </>
 ));

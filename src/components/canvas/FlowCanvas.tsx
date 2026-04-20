@@ -1,6 +1,4 @@
-// ─── Flow Canvas ─────────────────────────────────────────────────────────────
-// Core workspace: drag-and-drop, connections, auto-layout, undo/redo toolbar.
-
+// ─── Neo-Brutalist Flow Canvas ───────────────────────────────────────────────
 import React, { useCallback } from 'react';
 import {
   ReactFlow,
@@ -38,33 +36,31 @@ const nodeTypes = {
 function defaultDataForType(type: NodeType): any {
   switch (type) {
     case 'start':
-      return { type: 'start', label: 'Start', startTitle: 'Workflow Start', metadata: [] };
+      return { type: 'start', label: 'START', startTitle: 'INITIALIZE_FLOW', metadata: [] };
     case 'task':
-      return { type: 'task', label: 'New Task', title: 'New Task', description: '', assignee: '', dueDate: '', customFields: [] };
+      return { type: 'task', label: 'NEW_TASK', title: 'OPERATOR_STEP', description: '', assignee: '', dueDate: '', customFields: [] };
     case 'approval':
-      return { type: 'approval', label: 'Approval', title: 'Manager Approval', approverRole: 'Manager', autoApproveThreshold: 0 };
+      return { type: 'approval', label: 'VERIFY', title: 'QUALITY_GATE', approverRole: 'Manager', autoApproveThreshold: 0 };
     case 'automated':
-      return { type: 'automated', label: 'Automation', title: 'Automated Step', action: '', actionParams: {} };
+      return { type: 'automated', label: 'AUTOMATE', title: 'SYSTEM_CALL', action: '', actionParams: {} };
     case 'end':
-      return { type: 'end', label: 'End', endMessage: 'Workflow Complete', summaryFlag: true };
+      return { type: 'end', label: 'TERMINATED', endMessage: 'SEQUENCE_COMPLETE', summaryFlag: true };
   }
 }
 
-// ── Auto-layout with dagre ────────────────────────────────────────────────────
 function applyLayout(nodes: AppNode[], edges: any[], direction = 'TB') {
   const g = new dagre.graphlib.Graph();
   g.setDefaultEdgeLabel(() => ({}));
-  g.setGraph({ rankdir: direction, nodesep: 80, ranksep: 100 });
-  nodes.forEach((n) => g.setNode(n.id, { width: 260, height: 100 }));
+  g.setGraph({ rankdir: direction, nodesep: 100, ranksep: 120 });
+  nodes.forEach((n) => g.setNode(n.id, { width: 260, height: 120 }));
   edges.forEach((e: any) => g.setEdge(e.source, e.target));
   dagre.layout(g);
   return nodes.map((n) => {
     const pos = g.node(n.id);
-    return { ...n, position: { x: pos.x - 130, y: pos.y - 50 } };
+    return { ...n, position: { x: pos.x - 130, y: pos.y - 60 } };
   });
 }
 
-// ── Inner component (needs ReactFlowProvider above it) ────────────────────────
 const CanvasInner: React.FC = () => {
   const { screenToFlowPosition } = useReactFlow();
   const {
@@ -117,17 +113,19 @@ const CanvasInner: React.FC = () => {
       nodeTypes={nodeTypes}
       deleteKeyCode={['Backspace', 'Delete']}
       fitView
+      minZoom={0.2}
+      maxZoom={1.5}
     >
-      <Background variant={BackgroundVariant.Dots} gap={20} size={1} color="#e2e8f0" />
-      <Controls />
-      <MiniMap zoomable pannable nodeStrokeWidth={3} />
+      <Background variant={BackgroundVariant.Lines} gap={40} size={1} color="rgba(0,0,0,0.05)" />
+      <Controls showInteractive={false} position="top-left" />
+      <MiniMap pannable zoomable />
 
-      {/* Toolbar */}
-      <Panel position="top-right" className="flex gap-1.5">
-        <ToolBtn onClick={undo} label="Undo" />
-        <ToolBtn onClick={redo} label="Redo" />
-        <ToolBtn onClick={handleLayout} label="Auto-layout" />
-        <ToolBtn onClick={clearWorkflow} label="Clear" danger />
+      {/* Brutal Toolbar */}
+      <Panel position="top-right" className="flex gap-2 p-2">
+        <ToolBtn onClick={undo} label="UNDO" />
+        <ToolBtn onClick={redo} label="REDO" />
+        <ToolBtn onClick={handleLayout} label="AUTO_LAYOUT" />
+        <ToolBtn onClick={clearWorkflow} label="PURGE" danger />
       </Panel>
     </ReactFlow>
   );
@@ -136,17 +134,17 @@ const CanvasInner: React.FC = () => {
 const ToolBtn = ({ onClick, label, danger }: { onClick: () => void; label: string; danger?: boolean }) => (
   <button
     onClick={onClick}
-    className={`px-3 py-1.5 text-xs font-semibold rounded-lg border shadow-sm transition-colors
+    className={`px-4 py-2 text-[11px] font-black uppercase border-[3px] border-black shadow-[4px_4px_0_0_#000]
+      active:shadow-none active:translate-x-[4px] active:translate-y-[4px] transition-all
       ${danger
-        ? 'bg-white text-red-600 border-red-200 hover:bg-red-50'
-        : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+        ? 'bg-[#f87171] text-black hover:bg-red-500'
+        : 'bg-white text-black hover:bg-[#fcd34d]'
       }`}
   >
     {label}
   </button>
 );
 
-// ── Exported wrapper ──────────────────────────────────────────────────────────
 export const FlowCanvas: React.FC = () => (
   <ReactFlowProvider>
     <CanvasInner />
