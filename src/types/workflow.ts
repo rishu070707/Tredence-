@@ -1,5 +1,5 @@
 // ─── Node Data Types ─────────────────────────────────────────────────────────
-import type { Node, Edge } from '@xyflow/react';
+import type { Node } from '@xyflow/react';
 
 export type NodeType = 'start' | 'task' | 'approval' | 'automated' | 'end';
 

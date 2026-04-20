@@ -67,7 +67,7 @@ const CanvasInner: React.FC = () => {
     nodes, edges,
     onNodesChange, onEdgesChange, onConnect,
     addNode, onNodeSelect,
-    setNodes, setEdges,
+    setNodes,
     undo, redo, clearWorkflow, saveToHistory,
   } = useWorkflowStore();
 
