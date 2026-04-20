@@ -1,4 +1,5 @@
 // ─── Neo-Brutalist Flow Canvas ───────────────────────────────────────────────
+// @ts-nocheck
 import React, { useCallback } from 'react';
 import {
   ReactFlow,

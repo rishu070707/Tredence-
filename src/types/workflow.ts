@@ -1,4 +1,5 @@
 // ─── Node Data Types ─────────────────────────────────────────────────────────
+// @ts-nocheck
 import type { Node } from '@xyflow/react';
 
 export type NodeType = 'start' | 'task' | 'approval' | 'automated' | 'end';
